@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA-APOD FRONTEND EXAMPLE</title>
+
+    <!-- ESSENTIAL LINE IF WORKING WITH AXIOS IN PLAIN HTML -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+    <h1>NASA APOD API</h1>
+    <button
+        id="localButton"
+    >Request Local API (port 4000)</button>
+    <button
+        id="globalButton"
+    >Request NASA's API</button>
+        
+    <script>
+
+
+        document.getElementById("localButton").onclick = () => requestAPI("http://localhost:4000/nasa/apod");
+
+        document.getElementById("globalButton").onclick = () => requestAPI("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY");
+
+
+        function requestAPI(host) {
+
+            //Legacy implementation --> new XMLHttpRequest() <-----------------------------------------------------------------
+            const request = new XMLHttpRequest();
+            request.onload = () => {
+               const responseData = request.responseText;
+               const jsonData = JSON.parse(responseData);
+               console.log("XHR Response:");
+               console.log(jsonData);
+            }
+            request.onerror = () => {
+                console.log("Error Ocurred with XHR");
+                console.log(request.responseText);
+            }
+            request.open("GET", host);
+            request.send();
+
+            // Common standard --> FetchAPI <---------------------------------------------------------------------------------
+            fetch(host, {method: "GET"}) 
+            .then(response => response.json())
+            .then(data => {
+                console.log("Fetch Response:");
+                console.log(data);
+            })
+            .catch(err => {
+                console.log("Error Ocurred with Fetch API");
+                console.error(err);
+            });
+
+            //improvement upon FetchAPI --> Axios <----------------------------------------------------------------------------
+            axios.get(host)
+            .then(response => {
+                console.log("Axios Response");
+                console.log(response.data);
+            })
+            .catch(err => {
+                console.log("Error Ocurred with Axios");
+                console.log(err);
+            })
+            
+        }
+
+
+    </script>
+    
+</body>
+
+</html>
